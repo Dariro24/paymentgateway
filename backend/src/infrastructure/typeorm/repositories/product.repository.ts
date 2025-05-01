@@ -10,8 +10,8 @@ export class ProductRepository {
         private readonly repo: Repository<ProductOrmEntity>,
     ) {}
 
-    findAll(): Promise<ProductOrmEntity[]> {
-        return this.repo.find();
+    async findAll(): Promise<ProductOrmEntity[]> {
+        return await this.repo.find();
     }
 
     findById(id: number): Promise<ProductOrmEntity | null> {

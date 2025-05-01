@@ -1,39 +1,85 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { TransactionRepository } from '../../infrastructure/typeorm/repositories/transaction.repository';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionStatusDto } from './dto/update-transaction-status.dto';
+import { PaymentService } from '../../infrastructure/services/payment.service';
 
 @Controller('transactions')
 export class TransactionController {
-  constructor(private readonly repo: TransactionRepository) {}
+  constructor(
+    private readonly repo: TransactionRepository,
+    private readonly paymentService: PaymentService,
+  ) {}
 
-  @Post()
-  async create(@Body() body: CreateTransactionDto) {
-    const newTransaction = await this.repo.createTransaction({
-      transactionExternalId: body.transactionExternalId,
-      status: 'PENDING',
-      amount: body.amount,
+  @Post('/pay')
+  async pay(@Body() body: any) {
+    /**
+     * body esperado:
+     * {
+     *   number,
+     *   cvc,
+     *   exp_month,
+     *   exp_year,
+     *   card_holder,
+     *   customerEmail,
+     *   customerPhone,
+     *   customerLegalId,
+     *   legalIdType,
+     *   currency,
+     *   amountCents,
+     *   reference,
+     *   paymentDescription,
+     *   productId
+     *   installments,
+     * }
+     */
+
+    // 1. Obtener token de tarjeta (el servicio se encarga de solicitar acceptance_token internamente)
+    const acceptanceToken = await this.paymentService.getAcceptanceToken();
+    const cardToken = await this.paymentService.getCardToken({
+      number: body.number,
+      cvc: body.cvc,
+      expMonth: body.exp_month,
+      expYear: body.exp_year,
+      cardHolder: body.card_holder,
+      acceptanceToken: acceptanceToken,
+    });
+
+    // 2. Crear transacción en el procesador de pagos primero
+    const result = await this.paymentService.createTransaction({
+      amountCents: body.amountCents,
+      currency: body.currency || 'COP',
+      customerEmail: body.customerEmail,
+      paymentMethodToken: cardToken,
+      customerLegalId: body.customerLegalId,
+      customerFullName: body.card_holder,
+      customerPhone: body.customerPhone,
+      legalIdType: body.legalIdType,
+      reference: body.reference,
+      paymentDescription: body.paymentDescription,
+      installments: body.installments || '1', 
+    });
+
+    const apiStatus = result.data.status.toUpperCase();
+    const apiTransactionId = result.data.id;
+
+    // 3. Crear transacción en base de datos con el ID de la transacción de la API
+    const transaction = await this.repo.createTransaction({
+      transactionExternalId: apiTransactionId, // Usamos el ID de la transacción de la API
+      status: apiStatus === 'PENDING' ? 'PENDING' : apiStatus === 'APPROVED' ? 'APPROVED' : 'DECLINED',
+      amount: body.amountCents,
       customerEmail: body.customerEmail,
       productId: body.productId,
     });
-    return newTransaction;
-  }
 
-  @Put('/:transactionExternalId')
-  async updateStatus(
-    @Param('transactionExternalId') transactionExternalId: string,
-    @Body() body: UpdateTransactionStatusDto,
-  ) {
-    const transaction = await this.repo.findByExternalId(transactionExternalId);
-    if (!transaction) {
-      return { message: 'Transaction not found' };
-    }
-    await this.repo.updateTransactionStatus(transaction.id, body.status);
-    return { message: 'Status updated' };
-  }
-
-  @Get('/:transactionExternalId')
-  async findOne(@Param('transactionExternalId') transactionExternalId: string) {
-    return this.repo.findByExternalId(transactionExternalId);
+    // 4. Retornar respuesta
+    return {
+      transaction_reference: apiTransactionId,
+      api_transaction_id: apiTransactionId,
+      status: apiStatus,
+      message: apiStatus === 'PENDING'
+        ? '✅ Pago en proceso'
+        : apiStatus === 'APPROVED'
+        ? '✅ Pago aprobado'
+        : '❌ Pago rechazado por api',
+    };
   }
 }
