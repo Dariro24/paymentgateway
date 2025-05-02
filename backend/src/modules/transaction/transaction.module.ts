@@ -5,6 +5,7 @@ import { TransactionRepository } from '../../infrastructure/typeorm/repositories
 import { TransactionController } from './transaction.controller';
 import { PaymentService } from '../../infrastructure/services/payment.service';
 import { HttpModule } from '@nestjs/axios';
+import { PaymentStatusService } from '../../infrastructure/services/paymentStatus.service';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { HttpModule } from '@nestjs/axios';
   providers: [
     TransactionRepository,
     PaymentService,
+    PaymentStatusService,
   ],
   exports: [PaymentService], 
 })

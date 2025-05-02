@@ -1,12 +1,14 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post , Param} from '@nestjs/common';
 import { TransactionRepository } from '../../infrastructure/typeorm/repositories/transaction.repository';
 import { PaymentService } from '../../infrastructure/services/payment.service';
+import { PaymentStatusService } from '../../infrastructure/services/paymentStatus.service';
 
 @Controller('transactions')
 export class TransactionController {
   constructor(
     private readonly repo: TransactionRepository,
     private readonly paymentService: PaymentService,
+    private readonly payStatus: PaymentStatusService,
   ) {}
 
   @Post('/pay')
@@ -86,5 +88,31 @@ export class TransactionController {
   async getAllTransactions() {
     const transactions = await this.repo.findAll();
     return transactions;
+  }
+
+  @Get('/id/:transactionId')
+  async verifyTransaction(@Param('transactionId') transactionId: string) {
+    
+    const apiResponse = await this.payStatus.getTransactionStatus(transactionId);
+    
+    if (!apiResponse || !apiResponse.data) {
+      return { message: '❌ No se encontró la transacción' };
+    }
+
+    const apiStatus = apiResponse.data.status.toUpperCase();
+
+    // 2. Actualizar el estado en la base de datos
+    await this.repo.updateTransactionStatus(transactionId, apiStatus);
+
+    // 3. Retornar la información de la transacción
+    return {
+      transactionId,
+      api_transaction_status: apiStatus,
+      message: apiStatus === 'PENDING'
+        ? '⚠️ Pago aún en proceso'
+        : apiStatus === 'APPROVED'
+        ? '✅ Pago aprobado'
+        : '❌ Pago rechazado',
+    };
   }
 }
