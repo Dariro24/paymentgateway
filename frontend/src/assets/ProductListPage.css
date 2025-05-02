@@ -1,0 +1,103 @@
+/* Contenedor principal ocupa el 100% del ancho */
+.product-list-container {
+    width: 100vw;
+    padding: 2rem;
+    background-color: #f7f7f7;
+    box-sizing: border-box;
+  }
+  
+  /* Título de la página */
+  .title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Grid de productos con ajuste dinámico */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    justify-content: center;
+  }
+  
+  /* Tarjeta de producto */
+  .product-card {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-width: 220px;
+  }
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Nombre del producto */
+  .product-name {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Descripción del producto */
+  .product-description {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Precio del producto */
+  .product-price {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #16a34a;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Stock del producto */
+  .product-stock {
+    font-size: 0.9rem;
+    color: #d97706;
+    margin-bottom: 0.8rem;
+  }
+  
+  /* Botón para seleccionar un producto */
+  .select-button {
+    background-color: #2563eb;
+    color: #fff;
+    padding: 0.48rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .select-button:hover {
+    background-color: #1d4ed8;
+  }
+  
+  /* Contenedor del botón para transacciones */
+  .button-container {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  
+  /* Botón para ir a transacciones */
+  .transactions-button {
+    background-color: #10b981;
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .transactions-button:hover {
+    background-color: #059669;
+  }
+  

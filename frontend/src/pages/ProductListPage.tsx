@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setProducts, selectProduct } from '../store/productSlice';
 import { RootState } from '../store';
 import { useNavigate } from 'react-router-dom';
-
+import '../assets/ProductListPage.css';
 
 const ProductListPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -12,9 +12,10 @@ const ProductListPage: React.FC = () => {
   const products = useSelector((state: RootState) => state.product.all);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/products')
-      .then(res => dispatch(setProducts(res.data)))
-      .catch(err => console.error('Error al obtener productos:', err));
+    axios
+      .get('http://localhost:3000/products')
+      .then((res) => dispatch(setProducts(res.data)))
+      .catch((err) => console.error('Error al obtener productos:', err));
   }, [dispatch]);
 
   const handleSelect = (product: any) => {
@@ -22,23 +23,33 @@ const ProductListPage: React.FC = () => {
     navigate('/checkout');
   };
 
+  // Función para ir a la ruta de transacciones
+  const goToTransactions = () => {
+    navigate('/transactions');
+  };
+
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-xl font-semibold text-center mb-4">Selecciona un producto</h1>
-      <div className="grid gap-4">
-        {products.map(product => (
-          <div key={product.id} className="bg-white p-4 rounded shadow">
-            <h2 className="text-lg font-bold">{product.name}</h2>
-            <p className="text-gray-600 text-sm">{product.description}</p>
-            <p className="text-green-600 font-semibold mb-2">${Number(product.price).toLocaleString()} COP</p>
-            <button
-              onClick={() => handleSelect(product)}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-            >
+    <div className="product-list-container">
+      <h1 className="title">Selecciona un producto</h1>
+      <div className="product-grid">
+        {products.map((product: any) => (
+          <div key={product.id} className="product-card">
+            <h2 className="product-name">{product.name}</h2>
+            <p className="product-description">{product.description}</p>
+            <p className="product-price">
+              ${Number(product.price).toLocaleString()} COP
+            </p>
+            <p className="product-stock">Stock: {product.stock}</p>
+            <button onClick={() => handleSelect(product)} className="select-button">
               Seleccionar
             </button>
           </div>
         ))}
+      </div>
+      <div className="button-container">
+        <button onClick={goToTransactions} className="transactions-button">
+          Ir a Transacciones
+        </button>
       </div>
     </div>
   );

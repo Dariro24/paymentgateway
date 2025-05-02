@@ -1,0 +1,83 @@
+/* Contenedor principal: ocupa toda la pantalla */
+.checkout-container {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Toda la pantalla */
+    background-color: #f2f2f2; /* Fondo sutil */
+    padding: 2rem;
+  }
+  
+  /* Contenedor interno: centrado */
+  .checkout-content {
+    width: 100%;
+    max-width: 600px; /* Se mantiene contenido en pantallas grandes */
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Título */
+  .checkout-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Ajustes de formulario */
+  .checkout-form {
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .checkout-form input,
+  .checkout-form select {
+    width: 100%;
+    padding: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  .checkout-form button {
+    background: #007bff;
+    color: white;
+    font-size: 1.2rem;
+    padding: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .checkout-form button:hover {
+    background: #0056b3;
+  }
+  
+  /* Responsive: Ajuste para pantallas pequeñas (iPhone SE) */
+  @media (max-width: 375px) {
+    .checkout-content {
+      max-width: 90%;
+      padding: 1rem;
+    }
+  
+    .checkout-title {
+      font-size: 1.5rem;
+    }
+  
+    .checkout-form input,
+    .checkout-form select {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+    }
+  
+    .checkout-form button {
+      font-size: 1rem;
+      padding: 0.8rem;
+    }
+  }
+  

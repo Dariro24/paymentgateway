@@ -15,9 +15,9 @@ export class TransactionRepository {
         return this.repo.save(transaction);
     }
 
-    async updateTransactionStatus(id: number, status: 'APPROVED' | 'DECLINED'): Promise<void> {
-        await this.repo.update(id, { status });
-    }
+    async updateTransactionStatus(transactionId: string, status: "PENDING" | "APPROVED" | "DECLINED"): Promise<void> {
+        await this.repo.update({ transactionExternalId: transactionId }, { status });
+      }
 
     async findByExternalId(transactionExternalId: string): Promise<TransactionOrmEntity | null> {
         return this.repo.findOne({ where: { transactionExternalId } });
