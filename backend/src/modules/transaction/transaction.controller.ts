@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { TransactionRepository } from '../../infrastructure/typeorm/repositories/transaction.repository';
 import { PaymentService } from '../../infrastructure/services/payment.service';
 
@@ -81,5 +81,10 @@ export class TransactionController {
         ? '✅ Pago aprobado'
         : '❌ Pago rechazado por api',
     };
+  }
+  @Get()
+  async getAllTransactions() {
+    const transactions = await this.repo.findAll();
+    return transactions;
   }
 }
