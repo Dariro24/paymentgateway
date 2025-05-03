@@ -27,12 +27,12 @@ npm run start:dev
 ## ⚙️ Variables de entorno
 Crea un archivo .env con las siguientes variables:
 
--------------EJEMPLO-----------------------------
+## EJEMPLO .env
 API_URL=https://api-sandbox.co.uat.wompi.dev/v1
 PUBLIC_KEY=pub_stagtest_XXXXX
 PRIVATE_KEY=prv_stagtest_XXXXX
 INTEGRITY_KEY=stagtest_integrity_XXXXX
--------------REAL--------------------------------
+## REAL .env
 DB_HOST=ep-cold-leaf-a4asyus7-pooler.us-east-1.aws.neon.tech
 DB_PORT=5432
 DB_USERNAME=bd_pagos_owner
