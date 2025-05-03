@@ -1,23 +1,47 @@
+/* Declaración de variables CSS para la paleta de colores */
+:root {
+  --primary-color: #6200ea; /* Púrpura vibrante */
+  --secondary-color: #03dac6; /* Verde agua */
+  --background-color: #f5f5f5; /* Gris muy claro */
+  --card-background: #ffffff;
+  --text-color: #333333;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Reinicio básico y estilos globales */
+body {
+  background: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Contenedor principal */
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
 }
 
+/* Estilos para la imagen/logo */
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: 4em;
+  padding: 1em;
   will-change: filter;
-  transition: filter 300ms;
+  transition: filter 300ms, transform 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em var(--secondary-color));
+  transform: scale(1.05);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em var(--primary-color));
 }
 
+/* Animación para el logo */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -26,17 +50,122 @@
     transform: rotate(360deg);
   }
 }
-
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
 }
 
+/* Estilos para la tarjeta con contenido */
 .card {
-  padding: 2em;
+  background: var(--card-background);
+  padding: 1.5em;
+  margin: 1rem 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px var(--shadow-color);
 }
 
+/* Texto complementario */
 .read-the-docs {
-  color: #888;
+  color: var(--text-color);
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+/* Estilos para enlaces */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+a:hover {
+  color: var(--secondary-color);
+  text-decoration: underline;
+}
+
+/* Media Queries para responsividad */
+
+/* Estilos específicos para iPhone 8 (375px) y dispositivos similares */
+@media only screen and (max-width: 375px) {
+  #root {
+    padding: 0.5rem;
+  }
+  
+  .logo {
+    height: 3em;
+    padding: 0.5em;
+  }
+  
+  .card {
+    padding: 1em;
+    margin: 0.75rem 0;
+    border-radius: 8px;
+  }
+  
+  .read-the-docs {
+    font-size: 0.9rem;
+  }
+}
+
+/* Dispositivos pequeños (móviles) */
+@media only screen and (max-width: 480px) {
+  #root {
+    padding: 0.75rem;
+  }
+  
+  .logo {
+    height: 3.5em;
+  }
+  
+  .card {
+    padding: 1.25em;
+  }
+}
+
+/* Dispositivos medianos (tablets) */
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+  #root {
+    padding: 1.5rem;
+  }
+}
+
+/* Dispositivos grandes (desktops) */
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  #root {
+    padding: 2rem;
+  }
+}
+
+/* Dispositivos extra grandes (desktops grandes) */
+@media only screen and (min-width: 1025px) {
+  /* Puedes añadir ajustes específicos si es necesario */
+}
+
+/* Ajustes para orientación landscape */
+@media only screen and (max-width: 667px) and (orientation: landscape) {
+  .logo {
+    height: 3em;
+    padding: 0.5em;
+  }
+  
+  .card {
+    padding: 1em;
+    margin: 0.5rem 0;
+  }
+}
+
+/* Mejoras para dispositivos con pantalla táctil */
+@media (pointer: coarse) {
+  a {
+    padding: 0.5em 0; /* Más área táctil */
+  }
+  
+  .card {
+    min-height: 44px; /* Tamaño mínimo recomendado para elementos táctiles */
+  }
 }

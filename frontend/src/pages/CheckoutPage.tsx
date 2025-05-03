@@ -8,7 +8,7 @@ import {
   transactionError,
 } from '../store/transactionSlice';
 import { useNavigate } from 'react-router-dom';
-import '../assets/CheckoutPage.css'; 
+import '../assets/CheckoutPage.css';
 
 const CheckoutPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -32,6 +32,8 @@ const CheckoutPage: React.FC = () => {
     paymentDescription: '',
     productId: 0,
     installments: '1',
+    acceptedTerms: false,
+    acceptedData: false,
   });
 
   useEffect(() => {
@@ -49,7 +51,7 @@ const CheckoutPage: React.FC = () => {
   }, [selectedProduct]);
 
   const fillProductFields = (product: any) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       amountCents: Number(product.price) * 100,
       productId: product.id,
@@ -57,13 +59,24 @@ const CheckoutPage: React.FC = () => {
     }));
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, type } = e.target;
+    // Si es checkbox, usamos .checked en lugar de .value
+    const value = type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Verificar que ambos checkboxes hayan sido aceptados
+    if (!(form.acceptedTerms && form.acceptedData)) {
+      alert('Debe aceptar los términos y condiciones y el tratamiento de datos personales para continuar.');
+      return;
+    }
+
     dispatch(startTransaction());
 
     try {
@@ -80,7 +93,7 @@ const CheckoutPage: React.FC = () => {
     <div className="checkout-container">
       <div className="checkout-content">
         <h1 className="checkout-title">Resumen de compra</h1>
-  
+
         {selectedProduct && (
           <div className="product-card">
             <img src="/product.jpg" alt={selectedProduct.name} />
@@ -90,37 +103,143 @@ const CheckoutPage: React.FC = () => {
             <p className="product-stock">Stock: {selectedProduct.stock}</p>
           </div>
         )}
-  
+
         <form onSubmit={handleSubmit} className="checkout-form">
-          <input type="text" name="card_holder" placeholder="Titular de la tarjeta" value={form.card_holder} onChange={handleChange} required />
-          <input type="text" name="number" placeholder="Número de tarjeta" value={form.number} onChange={handleChange} required />
-          <input type="text" name="cvc" placeholder="CVC" value={form.cvc} onChange={handleChange} required />
-          <input type="text" name="exp_month" placeholder="Mes expiración (MM)" value={form.exp_month} onChange={handleChange} required />
-          <input type="text" name="exp_year" placeholder="Año expiración (YY)" value={form.exp_year} onChange={handleChange} required />
-          <input type="email" name="customerEmail" placeholder="Email" value={form.customerEmail} onChange={handleChange} required />
-          <input type="text" name="customerPhone" placeholder="Teléfono" value={form.customerPhone} onChange={handleChange} required />
-          <input type="text" name="customerLegalId" placeholder="Cédula" value={form.customerLegalId} onChange={handleChange} required />
-          <select name="legalIdType" value={form.legalIdType} onChange={handleChange}>
+          <input
+            type="text"
+            name="card_holder"
+            placeholder="Titular de la tarjeta"
+            value={form.card_holder}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="number"
+            placeholder="Número de tarjeta"
+            value={form.number}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="cvc"
+            placeholder="CVC"
+            value={form.cvc}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="exp_month"
+            placeholder="Mes expiración (MM)"
+            value={form.exp_month}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="exp_year"
+            placeholder="Año expiración (YY)"
+            value={form.exp_year}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="email"
+            name="customerEmail"
+            placeholder="Email"
+            value={form.customerEmail}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="customerPhone"
+            placeholder="Teléfono"
+            value={form.customerPhone}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="customerLegalId"
+            placeholder="Cédula"
+            value={form.customerLegalId}
+            onChange={handleChange}
+            required
+          />
+          <select
+            name="legalIdType"
+            value={form.legalIdType}
+            onChange={handleChange}
+          >
             <option value="CC">C.C.</option>
             <option value="CE">C.E.</option>
           </select>
-          <select name="installments" value={form.installments} onChange={handleChange} required>
+          <select
+            name="installments"
+            value={form.installments}
+            onChange={handleChange}
+            required
+          >
             <option value="1">1 cuota</option>
             <option value="2">2 cuotas</option>
             <option value="3">3 cuotas</option>
             <option value="6">6 cuotas</option>
             <option value="12">12 cuotas</option>
           </select>
-  
-          <button type="submit" className="checkout-button">
+
+          {/* Checkbox para términos y condiciones */}
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="acceptedTerms"
+              checked={form.acceptedTerms}
+              onChange={handleChange}
+            />
+            Acepto los&nbsp;
+            <a
+              href="https://wompi.com/assets/downloadble/reglamento-Usuarios-Colombia.pdf"
+              target="_blank"
+              rel="noreferrer"
+            >
+              términos y condiciones
+            </a>
+          </label>
+
+          {/* Checkbox para tratamiento de datos personales */}
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="acceptedData"
+              checked={form.acceptedData}
+              onChange={handleChange}
+            />
+            Acepto el&nbsp;
+            <a
+              href="https://wompi.com/assets/downloadble/autorizacion-administracion-datos-personales.pdf"
+              target="_blank"
+              rel="noreferrer"
+            >
+              tratamiento de datos personales
+            </a>
+          </label>
+
+          {/* Deshabilitar el botón si los checkboxes no están seleccionados */}
+          <button
+            type="submit"
+            className="checkout-button"
+            disabled={!(form.acceptedTerms && form.acceptedData)}
+          >
             Pagar
           </button>
         </form>
-  
+
         {transaction.status === 'success' && (
           <div className="success-message">{transaction.data.message}</div>
         )}
-  
+
         {transaction.status === 'error' && (
           <div className="error-message">{transaction.error}</div>
         )}
