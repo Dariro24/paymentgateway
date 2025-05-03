@@ -1,0 +1,29 @@
+export declare class PaymentService {
+    private apiUrl;
+    private publicKey;
+    private privateKey;
+    private integrityKey;
+    getAcceptanceToken(): Promise<string>;
+    private generateSignature;
+    getCardToken(params: {
+        number: string;
+        cvc: string;
+        expMonth: string;
+        expYear: string;
+        cardHolder: string;
+        acceptanceToken: string;
+    }): Promise<string>;
+    createTransaction(params: {
+        amountCents: number;
+        currency: string;
+        customerEmail: string;
+        paymentMethodToken: string;
+        customerLegalId: string;
+        customerFullName: string;
+        customerPhone: string;
+        legalIdType: string;
+        installments: string;
+        reference: string;
+        paymentDescription: string;
+    }): Promise<any>;
+}
