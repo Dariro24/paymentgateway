@@ -1,5 +1,6 @@
 import React from 'react';
 import '../assets/TransactionsListPage.css';
+import { useNavigate } from 'react-router-dom';
 
 interface Transaction {
     id: number;
@@ -27,11 +28,28 @@ const RefreshIcon = ({ className = '' }: { className?: string }) => (
     </svg>
 );
 
+const ArrowLeftIcon = ({ className = '' }: { className?: string }) => (
+    <svg
+      className={`arrow-left-icon ${className}`}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M19 12H5" />
+      <path d="M12 19l-7-7 7-7" />
+    </svg>
+);
+
 const TransactionsListPage: React.FC = () => {
+    const navigate = useNavigate();
     const [transactions, setTransactions] = React.useState<Transaction[]>([]);
     const [statusFilter, setStatusFilter] = React.useState<'ALL' | 'PENDING' | 'APPROVED' | 'DECLINED'>('ALL');
     const [sortOrder, setSortOrder] = React.useState<'NEWEST' | 'OLDEST'>('NEWEST');
     const [refreshingIds, setRefreshingIds] = React.useState<number[]>([]);
+    const [isRefreshingAll, setIsRefreshingAll] = React.useState(false);
 
     React.useEffect(() => {
         fetchTransactions();
@@ -47,12 +65,10 @@ const TransactionsListPage: React.FC = () => {
         }
     };
 
-    // Modificamos la función para recibir el objeto transaction en lugar de solo el id
     const checkTransactionStatus = async (transaction: Transaction) => {
         setRefreshingIds(prev => [...prev, transaction.id]);
 
         try {
-            // Utilizamos el transactionExternalId en lugar del id
             const response = await fetch(`http://localhost:3000/transactions/id/${transaction.transactionExternalId}`);
             const updatedTransaction = await response.json();
 
@@ -63,6 +79,17 @@ const TransactionsListPage: React.FC = () => {
             console.error(`Error checking status for transaction ${transaction.id}:`, error);
         } finally {
             setRefreshingIds(prev => prev.filter(id => id !== transaction.id));
+        }
+    };
+
+    const refreshAllTransactions = async () => {
+        setIsRefreshingAll(true);
+        try {
+            await fetchTransactions();
+        } catch (error) {
+            console.error("Error refreshing all transactions:", error);
+        } finally {
+            setIsRefreshingAll(false);
         }
     };
 
@@ -87,7 +114,26 @@ const TransactionsListPage: React.FC = () => {
 
     return (
         <div className="transactions-container">
-            <h1 className="transactions-title">Transaction History</h1>
+            <div className="page-header">
+                <h1 className="transactions-title">Transaction History</h1>
+                <div className="header-actions">
+                    <button 
+                        className="back-button"
+                        onClick={() => navigate('/')}
+                    >
+                        <ArrowLeftIcon />
+                        Back to Products
+                    </button>
+                    <button 
+                        className={`refresh-all-button ${isRefreshingAll ? 'refreshing' : ''}`}
+                        onClick={refreshAllTransactions}
+                        disabled={isRefreshingAll}
+                    >
+                        <RefreshIcon className={isRefreshingAll ? 'refreshing' : ''} />
+                        {isRefreshingAll ? 'Refreshing...' : 'Refresh All'}
+                    </button>
+                </div>
+            </div>
 
             {/* Filters */}
             <div className="filters-container">
@@ -155,7 +201,7 @@ const TransactionsListPage: React.FC = () => {
                                     disabled={refreshingIds.includes(transaction.id)}
                                 >
                                     <RefreshIcon className={refreshingIds.includes(transaction.id) ? 'refreshing' : ''} />
-                                    Refrescar
+                                    Refresh
                                 </button>
                             </td>
                         </tr>
